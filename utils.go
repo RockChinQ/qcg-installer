@@ -12,6 +12,7 @@ import (
 	"net/url"
 	"os"
 	"os/exec"
+	"path/filepath"
 	"strconv"
 	"strings"
 	"time"
@@ -102,59 +103,69 @@ func DownloadFile(file_url, save_path, proxy string) string {
 }
 
 //解压
-func DeCompress(zipFile, dest string) error {
+func DeCompress(zipFile, dest string) (string, error) {
+	// 打开zip文件
 	reader, err := zip.OpenReader(zipFile)
 	if err != nil {
-		return err
+		return "", err
 	}
-	defer reader.Close()
+
+	defer func() {
+		err := reader.Close()
+		if err != nil {
+			log.Fatalf("[unzip]: close reader %s", err.Error())
+		}
+	}()
+
+	var (
+		first string // 记录第一次的解压的名字
+		order int    = 0
+	)
+
 	for _, file := range reader.File {
 		rc, err := file.Open()
 		if err != nil {
-			return err
+			return "", err
 		}
-		defer rc.Close()
-		filename := dest + file.Name
-		println("解压: " + filename)
-		err = os.MkdirAll(getDir(filename), 0755)
-		if err != nil {
-			return err
+		filename := filepath.Join(dest, file.Name)
+		println("解压" + filename)
+		//记录第一次的名字
+		if order == 0 {
+			first = filename
 		}
-		w, err := os.Create(filename)
-		if err != nil {
-			return err
+		order += 1
+		//fmt.Println(getDir(filename))
+		if file.FileInfo().IsDir() {
+			err = os.MkdirAll(filename, 0755)
+			if err != nil {
+				return "", err
+			}
+		} else {
+			w, err := os.Create(filename)
+			if err != nil {
+				return "", err
+			}
+			//defer w.Close()
+			_, err = io.Copy(w, rc)
+			if err != nil {
+				return "", err
+			}
+			iErr := w.Close()
+			if iErr != nil {
+				log.Fatalf("[unzip]: close io %s", iErr.Error())
+			}
+			fErr := rc.Close()
+			if fErr != nil {
+				log.Fatalf("[unzip]: close io %s", fErr.Error())
+			}
 		}
-		defer w.Close()
-		_, err = io.Copy(w, rc)
-		if err != nil {
-			return err
-		}
-		w.Close()
-		rc.Close()
 	}
-	return nil
-}
-func getDir(path string) string {
-	return subString(path, 0, strings.LastIndex(path, "/"))
-}
-func subString(str string, start, end int) string {
-	rs := []rune(str)
-	length := len(rs)
-
-	if start < 0 || start > length {
-		panic("start is wrong")
-	}
-
-	if end < start || end > length {
-		panic("end is wrong")
-	}
-
-	return string(rs[start:end])
+	return first, nil
 }
 
-func RunCMDPipe(cmd_str string, args ...string) error {
+func RunCMDPipe(task_label, dir, cmd_str string, args ...string) error {
 	cmd := exec.Command(cmd_str, args...)
-
+	cmd.Dir = dir
 	//显示运行的命令
 	fmt.Println(cmd.Args)
 
@@ -175,11 +186,46 @@ func RunCMDPipe(cmd_str string, args ...string) error {
 		if err2 != nil || io.EOF == err2 {
 			break
 		}
-		fmt.Print(line)
+		fmt.Print("[" + task_label + "] " + line)
 	}
 
 	cmd.Wait()
 	return nil
+}
+
+func RunCMDTillStringOutput(task_label, dir, ending, cmd_str string, args ...string) (string, error) {
+	cmd := exec.Command(cmd_str, args...)
+	cmd.Dir = dir
+	//显示运行的命令
+	fmt.Println(cmd.Args)
+
+	stdout, err := cmd.StdoutPipe()
+
+	if err != nil {
+		fmt.Println(err)
+		return "", err
+	}
+
+	cmd.Start()
+
+	reader := bufio.NewReader(stdout)
+	var result string
+	//实时循环读取输出流中的一行内容
+	for {
+		line, err2 := reader.ReadString('\n')
+		if err2 != nil || io.EOF == err2 {
+			break
+		}
+		fmt.Print("[" + task_label + "] " + line)
+		result += line
+		if strings.Contains(line, ending) {
+			cmd.Process.Kill()
+			break
+		}
+	}
+
+	cmd.Wait()
+	return result, nil
 }
 
 func ReplaceStringInFile(filename, oldStr, newStr string) error {
