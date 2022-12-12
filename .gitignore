@@ -4,3 +4,4 @@ mirai/
 QChatGPT/
 run-bot*
 run-mirai*
+*.exe
