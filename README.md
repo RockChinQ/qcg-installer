@@ -14,7 +14,7 @@
 从[Release页面](https://github.com/RockChinQ/qcg-installer/releases)下载可执行文件，直接运行，等待环境配置完毕后根据提示输入`api-key`和`QQ号`  
 运行完毕后即可运行`run-mirai.bat`启动mirai并输入`login <QQ号> <QQ密码>`根据提示登录账号，登录完成后运行`run-bot.bat`启动机器人  
 
-- 若下载速度较慢需要使用网络代理，请在启动安装器时提供参数`-p <代理地址>`,如：
+- 若下载速度较慢欲使用网络代理，可在启动安装器时提供参数`-p <代理地址>`,如：
 ```
 qcg-installer-0.1-windows-x64.exe -p http://localhost:7890
 ```
