@@ -142,7 +142,7 @@ adapterSettings:
 	println("=============================================")
 
 	api_key := ""
-	print("请输入api_key: ")
+	print("请输入OpenAI账号的api_key: ")
 	fmt.Scanf("%s", &api_key)
 	ReplaceStringInFile("./QChatGPT/config.py", "openai_api_key", api_key)
 
