@@ -11,7 +11,7 @@
     - [只需 1 元搞定 ChatGPT 注册](https://zhuanlan.zhihu.com/p/589470082)
     - [手把手教你如何注册ChatGPT，超级详细](https://guxiaobei.com/51461)
 
-从[Release页面](https://github.com/RockChinQ/qcg-installer/releases)下载可执行文件，直接运行，等待环境配置完毕后根据提示输入`api-key`和`QQ号`  
+从[Release页面](https://github.com/RockChinQ/qcg-installer/releases/latest)下载可执行文件，直接运行，等待环境配置完毕后根据提示输入`api-key`和`QQ号`  
 运行完毕后即可运行`run-mirai.bat`启动mirai并输入`login <QQ号> <QQ密码>`根据提示登录账号，登录完成后运行`run-bot.bat`启动机器人  
 
 - 若启动后提示安装`uvicorn`或`hypercorn`，请**不要**安装，会导致不明原因bug
