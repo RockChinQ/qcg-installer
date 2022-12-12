@@ -1,6 +1,6 @@
 # Installer for QChatGPT
 
-为QChatGPT项目使用Go语言编写的一键部署脚本，自动化部署所需依赖  
+为[QChatGPT项目](https://github.com/RockChinQ/QChatGPT)使用Go语言编写的一键部署脚本，自动化部署所需依赖  
 
 - 注意：下载的Python和mirai均为免安装版，不影响系统其他环境
 
