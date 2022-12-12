@@ -102,7 +102,7 @@ func downloadMCLInstaller(osname, arch, proxy string) string {
 }
 
 func installMCL(osname, arch, installer_file, proxy string) {
-	println("安装mirai, 建议全部选项直接回车")
+	println("安装mirai")
 	installer_file = strings.ReplaceAll(installer_file, "mirai/", "")
 	println(installer_file)
 	if osname == "windows" {
@@ -111,9 +111,13 @@ func installMCL(osname, arch, installer_file, proxy string) {
 		RunCMDPipe("安装mirai", "chmod", "+x", installer_file)
 		RunCMDPipe("安装mirai", "./mirai", installer_file)
 	}
+
 	RunCMDTillStringOutput("安装mirai", "./mirai", "I/main: mirai-console started successfully.", "./java/bin/java", "-jar", "mcl.jar")
 	RunCMDPipe("安装mirai", "./mirai", "./java/bin/java", "-jar", "mcl.jar", "--update-package", "net.mamoe:mirai-api-http", "--channel", "stable-v2", "--type", "plugin")
 	RunCMDTillStringOutput("安装mirai", "./mirai", "I/main: mirai-console started successfully.", "./java/bin/java", "-jar", "mcl.jar")
+
+	//更改协议
+	ReplaceStringInFile("./mirai/config/Console/AutoLogin.yml", "protocol: ANDROID_PHONE", "protocol: ANDROID_PAD")
 }
 
 func cloneSource() {
