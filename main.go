@@ -122,7 +122,7 @@ func installMCL(osname, arch, installer_file, proxy string) {
 
 func cloneSource() {
 	println("下载源代码")
-	RunCMDPipe("下载源代码", ".", "git", "clone", "https://github.com/RockChinQ/QChatGPT")
+	RunCMDPipe("下载源代码", ".", "git", "clone", "https://gitee.com/RockChin/QChatGPT")
 }
 
 func makeConfig() {
