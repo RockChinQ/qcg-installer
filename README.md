@@ -20,6 +20,8 @@
 qcg-installer-0.1-windows-x64.exe -p http://localhost:7890
 ```
 
+- 运行`run-bot.bat`闪退请见[此解决方案](https://github.com/RockChinQ/qcg-installer/issues/2)
+
 ## 目前支持的平台和架构
 
 - Windows x64
