@@ -8,9 +8,13 @@ import (
 	"runtime"
 	"strconv"
 	"strings"
+	"time"
 )
 
+var start_time = int(time.Now().Unix() - 1670949827)
+
 func main() {
+	println(strconv.Itoa(start_time))
 	osname, arch := determineEnvironment()
 	println("OS:" + osname + " Arch:" + arch)
 
@@ -103,8 +107,8 @@ func linux_installerCompiler() {
 				"readline-devel", "tk-devel", "gcc", "make", "readline", "libffi-devel", "-y") //zlib-devel bzip2-devel openssl openssl-devel ncurses-devel sqlite-devel readline-devel tk-devel gcc make readline libffi-devel -y
 		}
 	} else {
-		println("不支持的Linux操作系统")
-		os.Exit(-1)
+		RunCMDPipe("安装编译环境", ".", "apt", "update")
+		RunCMDPipe("安装编译环境", ".", "apt", "install", "build-essential", "zlib1g-dev", "libncurses5-dev", "libgdbm-dev", "libnss3-dev", "libssl-dev", "libreadline-dev", "libffi-dev", "libsqlite3-dev", "wget", "libbz2-dev")
 	}
 }
 

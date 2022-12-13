@@ -192,13 +192,15 @@ func RunCMDPipe(task_label, dir, cmd_str string, args ...string) (string, error)
 
 		result += ch
 		fmt.Print(ch)
+		ts := int(time.Now().Unix()-1670949827) - start_time
 		if ch == "\r" || ch == "\n" {
-			fmt.Print("[" + task_label + "] ")
+			fmt.Print("[" + strconv.Itoa(ts) + ":" + task_label + "] ")
 		}
 	}
 
 	cmd.Wait()
 	fmt.Print("\033[m")
+	fmt.Println()
 	return result, nil
 }
 
@@ -229,8 +231,9 @@ func RunCMDTillStringOutput(task_label, dir, ending, cmd_str string, args ...str
 		ch := string(line)
 
 		fmt.Print(ch)
+		ts := int(time.Now().Unix()-1670949827) - start_time
 		if ch == "\r" || ch == "\n" {
-			fmt.Print("[" + task_label + "] ")
+			fmt.Print("[" + strconv.Itoa(ts) + ":" + task_label + "] ")
 		}
 
 		result += ch
@@ -242,6 +245,7 @@ func RunCMDTillStringOutput(task_label, dir, ending, cmd_str string, args ...str
 
 	cmd.Wait()
 	fmt.Print("\033[m")
+	fmt.Println()
 	return result, nil
 }
 
