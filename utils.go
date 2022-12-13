@@ -163,7 +163,7 @@ func DeCompress(zipFile, dest string) (string, error) {
 	return first, nil
 }
 
-func RunCMDPipe(task_label, dir, cmd_str string, args ...string) error {
+func RunCMDPipe(task_label, dir, cmd_str string, args ...string) (string, error) {
 	cmd := exec.Command(cmd_str, args...)
 	cmd.Dir = dir
 	//显示运行的命令
@@ -173,24 +173,33 @@ func RunCMDPipe(task_label, dir, cmd_str string, args ...string) error {
 
 	if err != nil {
 		fmt.Println(err)
-		return err
+		return "", err
 	}
 
 	cmd.Start()
 
 	reader := bufio.NewReader(stdout)
 
+	result := ""
 	//实时循环读取输出流中的一行内容
 	for {
-		line, err2 := reader.ReadString('\n')
+		line, err2 := reader.ReadByte()
 		if err2 != nil || io.EOF == err2 {
 			break
 		}
-		fmt.Print("[" + task_label + "] " + line)
+
+		ch := string(line)
+
+		result += ch
+		fmt.Print(ch)
+		if ch == "\r" || ch == "\n" {
+			fmt.Print("[" + task_label + "] ")
+		}
 	}
 
 	cmd.Wait()
-	return nil
+	fmt.Print("\033[m")
+	return result, nil
 }
 
 func RunCMDTillStringOutput(task_label, dir, ending, cmd_str string, args ...string) (string, error) {
@@ -212,19 +221,27 @@ func RunCMDTillStringOutput(task_label, dir, ending, cmd_str string, args ...str
 	var result string
 	//实时循环读取输出流中的一行内容
 	for {
-		line, err2 := reader.ReadString('\n')
+		line, err2 := reader.ReadByte()
 		if err2 != nil || io.EOF == err2 {
 			break
 		}
-		fmt.Print("[" + task_label + "] " + line)
-		result += line
-		if strings.Contains(line, ending) {
+
+		ch := string(line)
+
+		fmt.Print(ch)
+		if ch == "\r" || ch == "\n" {
+			fmt.Print("[" + task_label + "] ")
+		}
+
+		result += ch
+		if strings.Contains(result, ending) {
 			cmd.Process.Kill()
 			break
 		}
 	}
 
 	cmd.Wait()
+	fmt.Print("\033[m")
 	return result, nil
 }
 

@@ -4,6 +4,7 @@ import (
 	"flag"
 	"fmt"
 	"io/ioutil"
+	"os"
 	"runtime"
 	"strconv"
 	"strings"
@@ -16,14 +17,14 @@ func main() {
 	proxyString := flag.String("p", "", "proxy string")
 	flag.Parse()
 
-	mcl_file := downloadMCLInstaller(osname, arch, *proxyString)
-	installMCL(osname, arch, mcl_file, *proxyString)
-
 	python_achive_file := downloadPython(osname, arch, *proxyString)
 	installPython(osname, arch, python_achive_file, *proxyString)
 
+	mcl_file := downloadMCLInstaller(osname, arch, *proxyString)
+	installMCL(osname, arch, mcl_file, *proxyString)
+
 	cloneSource()
-	makeConfig()
+	makeConfig(osname)
 
 	writeLaunchScript(osname, arch)
 	println("安装完成!")
@@ -46,7 +47,7 @@ func downloadPython(osname, arch, proxy string) string {
 			panic("不支持的操作系统、架构组合")
 		}
 	} else if osname == "linux" {
-		python_url = "https://www.python.org/ftp/python/3.10.9/Python-3.10.9.tar.xz"
+		python_url = "https://www.python.org/ftp/python/3.10.9/Python-3.10.9.tgz"
 	}
 
 	println("下载Python环境:" + python_url)
@@ -72,6 +73,38 @@ func installPython(osname, arch, achive_file, proxy string) {
 		RunCMDPipe("安装依赖", ".", "./python/Scripts/pip.exe ", "install", "pymysql", "yiri-mirai", "openai", "colorlog", "func_timeout")
 		RunCMDPipe("安装依赖", ".", "./python/Scripts/pip.exe ", "install", "websockets", "--upgrade")
 
+	} else if osname == "linux" {
+		// DeCompress(achive_file,"./python/")
+		RunCMDPipe("解压Python源码", ".", "tar", "zxvf", achive_file, "-C", "./python")
+		linux_installerCompiler()
+		pwd, _ := RunCMDPipe("检查pwd", "./python/", "pwd")
+		pwd = strings.Trim(pwd, "\n")
+		RunCMDPipe("配置编译环境", "./python/Python-3.10.9", "./configure", "--prefix="+pwd)
+		RunCMDPipe("编译Python", "./python/Python-3.10.9", "make")
+		RunCMDPipe("安装Python", "./python/Python-3.10.9", "make", "install")
+
+		println("安装依赖")
+		RunCMDPipe("安装依赖", ".", "python/bin/pip3", "install", "pymysql", "yiri-mirai", "openai", "colorlog", "func_timeout")
+		RunCMDPipe("安装依赖", ".", "python/bin/pip3", "install", "websockets", "--upgrade")
+	}
+}
+
+func linux_installerCompiler() {
+
+	result, _ := RunCMDPipe("检查包管理器", ".", "apt")
+	print(result)
+	if result == "" {
+		result, _ := RunCMDPipe("检查包管理器", ".", "yum")
+		if result == "" {
+			fmt.Println("不支持的Linux操作系统")
+			os.Exit(-1)
+		} else {
+			RunCMDPipe("安装编译环境", ".", "yum", "install", "zlib-devel", "bzip2-devel", "openssl", "openssl-devel", "ncurses-devel", "sqlite-devel",
+				"readline-devel", "tk-devel", "gcc", "make", "readline", "libffi-devel", "-y") //zlib-devel bzip2-devel openssl openssl-devel ncurses-devel sqlite-devel readline-devel tk-devel gcc make readline libffi-devel -y
+		}
+	} else {
+		println("不支持的Linux操作系统")
+		os.Exit(-1)
 	}
 }
 
@@ -108,13 +141,13 @@ func installMCL(osname, arch, installer_file, proxy string) {
 	if osname == "windows" {
 		RunCMDPipe("安装mirai", "./mirai", installer_file)
 	} else if osname == "linux" {
-		RunCMDPipe("安装mirai", "chmod", "+x", installer_file)
+		RunCMDPipe("安装mirai", "./mirai", "chmod", "+x", installer_file)
 		RunCMDPipe("安装mirai", "./mirai", installer_file)
 	}
 
-	RunCMDTillStringOutput("安装mirai", "./mirai", "I/main: mirai-console started successfully.", "./java/bin/java", "-jar", "mcl.jar")
-	RunCMDPipe("安装mirai", "./mirai", "./java/bin/java", "-jar", "mcl.jar", "--update-package", "net.mamoe:mirai-api-http", "--channel", "stable-v2", "--type", "plugin")
-	RunCMDTillStringOutput("安装mirai", "./mirai", "I/main: mirai-console started successfully.", "./java/bin/java", "-jar", "mcl.jar")
+	RunCMDTillStringOutput("配置mirai", "./mirai", "I/main: mirai-console started successfully.", "./java/bin/java", "-jar", "mcl.jar")
+	RunCMDPipe("配置mirai", "./mirai", "./java/bin/java", "-jar", "mcl.jar", "--update-package", "net.mamoe:mirai-api-http", "--channel", "stable-v2", "--type", "plugin")
+	RunCMDTillStringOutput("配置mirai", "./mirai", "I/main: mirai-console started successfully.", "./java/bin/java", "-jar", "mcl.jar")
 
 	//更改协议
 	ReplaceStringInFile("./mirai/config/Console/AutoLogin.yml", "protocol: ANDROID_PHONE", "protocol: ANDROID_PAD")
@@ -125,9 +158,9 @@ func cloneSource() {
 	RunCMDPipe("下载源代码", ".", "git", "clone", "https://gitee.com/RockChin/QChatGPT")
 }
 
-func makeConfig() {
+func makeConfig(osname string) {
 	println("生成配置文件")
-	RunCMDPipe("生成配置文件", "./QChatGPT", "../python/python", "main.py")
+	RunCMDPipe("生成配置文件", "./QChatGPT", "../python/bin/python3", "main.py")
 	// RunCMDPipe("./QChatGPT", "../python/python", "main.py", "init_db")
 	mirai_api_http_config := `adapters:
   - ws
@@ -152,7 +185,9 @@ adapterSettings:
 
 	qqn := 0
 	print("请输入QQ号: ")
-	fmt.Scanf("%d", &qqn)
+	if osname == "windows" {
+		fmt.Scanf("%d", &qqn)
+	}
 	fmt.Scanf("%d", &qqn)
 	ReplaceStringInFile("./QChatGPT/config.py", "1234567890", strconv.Itoa(qqn))
 }
@@ -167,7 +202,9 @@ java\bin\java -jar mcl.jar`), 0644)
 	} else if osname == "linux" {
 		ioutil.WriteFile("./run-mirai.sh", []byte(`cd mirai/
 java/bin/java -jar mcl.jar`), 0644)
+		RunCMDPipe("修改脚本权限", ".", "chmod", "+x", "run-mirai.sh")
 		ioutil.WriteFile("./run-bot.sh", []byte(`cd QChatGPT
-../python/python main.py`), 0644)
+../python/bin/python3 main.py`), 0644)
+		RunCMDPipe("修改脚本权限", ".", "chmod", "+x", "run-bot.sh")
 	}
 }
