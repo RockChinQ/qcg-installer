@@ -27,3 +27,5 @@ qcg-installer-0.1-windows-x64.exe -p http://localhost:7890
 - Windows x64
 - CentOS x64
     - 以及其他使用`yum`作为包管理器的操作系统
+- Ubuntu x64
+    - 以及其他使用`apt`作为包管理器的操作系统
