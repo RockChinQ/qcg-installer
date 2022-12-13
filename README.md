@@ -25,3 +25,5 @@ qcg-installer-0.1-windows-x64.exe -p http://localhost:7890
 ## 目前支持的平台和架构
 
 - Windows x64
+- CentOS x64
+    - 以及其他使用`yum`作为包管理器的操作系统
