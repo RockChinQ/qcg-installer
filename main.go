@@ -4,6 +4,7 @@ import (
 	"flag"
 	"fmt"
 	"io/ioutil"
+	"net/http"
 	"os"
 	"runtime"
 	"strconv"
@@ -17,6 +18,17 @@ func main() {
 	println(strconv.Itoa(start_time))
 	osname, arch := determineEnvironment()
 	println("OS:" + osname + " Arch:" + arch)
+
+	go func() {
+		println("上报安装信息")
+		resp, err := http.Get("http://rockchin.top:18989/report?osname=" + osname + "&arch=" + arch + "&timestamp=" + strconv.FormatInt(time.Now().Unix(), 10) + "&version=0.5&mac=0")
+		if err != nil {
+			fmt.Println(err)
+			return
+		}
+		println("上报安装信息成功")
+		defer resp.Body.Close()
+	}()
 
 	proxyString := flag.String("p", "", "proxy string")
 	flag.Parse()
