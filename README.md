@@ -6,7 +6,7 @@
 
 ## 使用方法
 
-**部署过程中遇到任何问题，请先在[QChatGPT](https://github.com/RockChinQ/QChatGPT/issues)或[qcg-installer](https://github.com/RockChinQ/qcg-installer/issues)的issue里进行搜索**
+**部署过程中遇到任何问题，请先在[QChatGPT](https://github.com/RockChinQ/QChatGPT/issues)或[qcg-installer](https://github.com/RockChinQ/qcg-installer/issues)的issue里进行搜索，若找不到请前往：交流、答疑群: `204785790`**
 
 ### 1. 注册OpenAI账号
 
@@ -55,3 +55,4 @@ qcg-installer-0.1-windows-x64.exe -p http://localhost:7890
     - 以及其他使用`yum`作为包管理器的操作系统
 - Ubuntu x64
     - 以及其他使用`apt`作为包管理器的操作系统
+- Raspbian arm64
