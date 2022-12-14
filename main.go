@@ -164,8 +164,11 @@ func cloneSource() {
 
 func makeConfig(osname string) {
 	println("生成配置文件")
-	RunCMDPipe("生成配置文件", "./QChatGPT", "../python/bin/python3", "main.py")
-	// RunCMDPipe("./QChatGPT", "../python/python", "main.py", "init_db")
+	if osname == "linux" {
+		RunCMDPipe("生成配置文件", "./QChatGPT", "../python/bin/python3", "main.py")
+	} else {
+		RunCMDPipe("生成配置文件", "./QChatGPT", "../python/python.exe", "main.py", "init_db")
+	}
 	mirai_api_http_config := `adapters:
   - ws
 debug: true
