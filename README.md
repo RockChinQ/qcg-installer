@@ -17,7 +17,7 @@
 
 ### 2. 安装器
 
-- 从[Release页面](https://github.com/RockChinQ/qcg-installer/releases/latest)下载可执行文件  
+- 从[Release页面](https://github.com/RockChinQ/qcg-installer/releases/latest)下载可执行文件，若无法访问请到[Gitee](https://gitee.com/RockChin/qcg-installer/releases/latest)   
 - 保存到电脑上某个空目录，直接运行，等待配置环境
 - 完毕后根据提示输入`api-key`和`QQ号`  
 
