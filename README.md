@@ -6,6 +6,8 @@
 
 ## 使用方法
 
+**部署过程中遇到任何问题，请先在[QChatGPT](https://github.com/RockChinQ/QChatGPT/issues)或[qcg-installer](https://github.com/RockChinQ/qcg-installer/issues)的issue里进行搜索**
+
 ### 1. 注册OpenAI账号
 
 参考以下文章
