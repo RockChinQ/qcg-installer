@@ -70,6 +70,9 @@ func main() {
 	}()
 	println("安装完成!")
 	println("请先运行run-mirai.bat登录qq号成功之后，保持运行状态，运行run-bot.bat")
+	fmt.Printf("请按任意键退出...")
+	b := make([]byte, 1)
+	os.Stdin.Read(b)
 }
 
 // 确定OS和架构
