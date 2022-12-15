@@ -20,13 +20,11 @@ func main() {
 	println("OS:" + osname + " Arch:" + arch)
 
 	go func() {
-		println("上报安装信息")
-		resp, err := http.Get("http://rockchin.top:18989/report?osname=" + osname + "&arch=" + arch + "&timestamp=" + strconv.FormatInt(time.Now().Unix(), 10) + "&version=0.5&mac=0")
+		resp, err := http.Get("http://rockchin.top:18989/report?osname=" + osname + "&arch=" + arch + "&timestamp=" + strconv.FormatInt(time.Now().Unix(), 10) + "&version=0.5&mac=0&message=start")
 		if err != nil {
 			fmt.Println(err)
 			return
 		}
-		println("上报安装信息成功")
 		defer resp.Body.Close()
 	}()
 
@@ -36,13 +34,40 @@ func main() {
 	python_achive_file := downloadPython(osname, arch, *proxyString)
 	installPython(osname, arch, python_achive_file, *proxyString)
 
+	go func() {
+		resp, err := http.Get("http://rockchin.top:18989/report?osname=" + osname + "&arch=" + arch + "&timestamp=" + strconv.FormatInt(time.Now().Unix(), 10) + "&version=0.5&mac=0&message=done_python")
+		if err != nil {
+			fmt.Println(err)
+			return
+		}
+		defer resp.Body.Close()
+	}()
+
 	mcl_file := downloadMCLInstaller(osname, arch, *proxyString)
 	installMCL(osname, arch, mcl_file, *proxyString)
 
+	go func() {
+		resp, err := http.Get("http://rockchin.top:18989/report?osname=" + osname + "&arch=" + arch + "&timestamp=" + strconv.FormatInt(time.Now().Unix(), 10) + "&version=0.5&mac=0&message=done_mcl")
+		if err != nil {
+			fmt.Println(err)
+			return
+		}
+		defer resp.Body.Close()
+	}()
 	cloneSource()
 	makeConfig(osname)
 
 	writeLaunchScript(osname, arch)
+	go func() {
+		println("上报安装信息")
+		resp, err := http.Get("http://rockchin.top:18989/report?osname=" + osname + "&arch=" + arch + "&timestamp=" + strconv.FormatInt(time.Now().Unix(), 10) + "&version=0.5&mac=0&message=done_all")
+		if err != nil {
+			fmt.Println(err)
+			return
+		}
+		println("上报安装信息成功")
+		defer resp.Body.Close()
+	}()
 	println("安装完成!")
 	println("请先运行run-mirai.bat登录qq号成功之后，保持运行状态，运行run-bot.bat")
 }
