@@ -18,6 +18,7 @@ import (
 	"time"
 
 	pb "github.com/cheggaaa/pb/v3"
+	gogit "github.com/go-git/go-git/v5"
 )
 
 func DownloadFile(file_url, save_path, proxy string) string {
@@ -261,5 +262,13 @@ func ReplaceStringInFile(filename, oldStr, newStr string) error {
 	}
 	newContents := strings.Replace(string(bytes), oldStr, newStr, -1)
 	err = ioutil.WriteFile(filename, []byte(newContents), 0664)
+	return err
+}
+
+func GitClone(repo, dir string) error {
+	_, err := gogit.PlainClone(dir, false, &gogit.CloneOptions{
+		URL:      repo,
+		Progress: os.Stdout,
+	})
 	return err
 }
