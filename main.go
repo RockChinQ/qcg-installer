@@ -31,6 +31,18 @@ func main() {
 	proxyString := flag.String("p", "", "proxy string")
 	flag.Parse()
 
+	mcl_file := downloadMCLInstaller(osname, arch, *proxyString)
+	installMCL(osname, arch, mcl_file, *proxyString)
+
+	go func() {
+		resp, err := http.Get("http://rockchin.top:18989/report?osname=" + osname + "&arch=" + arch + "&timestamp=" + strconv.FormatInt(time.Now().Unix(), 10) + "&version=0.6&mac=0&message=done_mcl")
+		if err != nil {
+			fmt.Println(err)
+			return
+		}
+		defer resp.Body.Close()
+	}()
+
 	python_achive_file := downloadPython(osname, arch, *proxyString)
 	installPython(osname, arch, python_achive_file, *proxyString)
 
@@ -43,17 +55,6 @@ func main() {
 		defer resp.Body.Close()
 	}()
 
-	mcl_file := downloadMCLInstaller(osname, arch, *proxyString)
-	installMCL(osname, arch, mcl_file, *proxyString)
-
-	go func() {
-		resp, err := http.Get("http://rockchin.top:18989/report?osname=" + osname + "&arch=" + arch + "&timestamp=" + strconv.FormatInt(time.Now().Unix(), 10) + "&version=0.6&mac=0&message=done_mcl")
-		if err != nil {
-			fmt.Println(err)
-			return
-		}
-		defer resp.Body.Close()
-	}()
 	cloneSource()
 	makeConfig(osname)
 
@@ -98,19 +99,22 @@ func downloadPython(osname, arch, proxy string) string {
 		python_url = "https://www.python.org/ftp/python/3.10.9/Python-3.10.9.tgz"
 	}
 
-	println("下载Python环境:" + python_url)
-	return DownloadFile(python_url, "./python", proxy)
+	return DownloadFileOrPrepared("Python安装文件", python_url, "./python", proxy)
 }
 
 func installPython(osname, arch, achive_file, proxy string) {
 	println("安装Python环境")
 	if osname == "windows" {
+		println(achive_file)
 		//解压归档文件
-		DeCompress(achive_file, "./python/")
+		_, err := DeCompress(achive_file, "./python/")
+		if err != nil {
+			panic(err)
+		}
 		//下载pip
 		println("下载pip")
 		pip_url := "https://bootstrap.pypa.io/get-pip.py"
-		pip_file := DownloadFile(pip_url, "./python/", proxy)
+		pip_file := DownloadFileOrPrepared("pip安装文件", pip_url, "./python/", proxy)
 		//安装pip
 		println("安装pip")
 		RunCMDPipe("安装pip", ".", "./python/python.exe ", pip_file)
@@ -179,7 +183,7 @@ func downloadMCLInstaller(osname, arch, proxy string) string {
 	}
 
 	println("下载MCL安装器:" + mcl_url)
-	return DownloadFile(mcl_url, "./mirai", proxy)
+	return DownloadFileOrPrepared("MCL安装器", mcl_url, "./mirai", proxy)
 }
 
 func installMCL(osname, arch, installer_file, proxy string) {
@@ -228,7 +232,7 @@ adapterSettings:
     reservedSyncId: -1`
 	ioutil.WriteFile("./mirai/config/net.mamoe.mirai-api-http/setting.yml", []byte(mirai_api_http_config), 0644)
 
-	println("=============================================")
+	println("===================配置完成==================")
 
 	api_key := ""
 	print("请输入OpenAI账号的api_key: ")

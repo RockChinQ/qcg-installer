@@ -4,6 +4,7 @@ import (
 	"archive/zip"
 	"bufio"
 	"crypto/tls"
+	"errors"
 	"fmt"
 	"io"
 	"io/ioutil"
@@ -21,11 +22,88 @@ import (
 	gogit "github.com/go-git/go-git/v5"
 )
 
-func DownloadFile(file_url, save_path, proxy string) string {
+func DownloadFileOrPrepared(file_nick, file_url, save_path, proxy string) string {
 	//检查save_path是否存在，不存在则创建
 	if _, err := os.Stat(save_path); os.IsNotExist(err) {
 		os.Mkdir(save_path, os.ModePerm)
 	}
+	isLocal, fileName := DownloadFileWrapper(file_nick, file_url, save_path, proxy)
+	if isLocal {
+		_, err := copy(fileName, save_path+"/"+fileName)
+		if err != nil {
+			panic(err)
+		}
+		return save_path + "/" + fileName
+	}
+	return fileName
+}
+
+//返回是否是本地文件
+func DownloadFileWrapper(file_nick, file_url, save_path, proxy string) (bool, string) {
+
+	for {
+		//TODO 提前检查是否已存在
+		input := InputString("是否自动下载" + file_nick + ",如您已提前下载并放置在本目录请输入n。(y/n):")
+		if input == "y" {
+			fileName, err := DownloadFile(file_url, save_path, proxy)
+			if err != nil {
+				println("[ERR]" + file_nick + "下载失败,建议自行下载文件放置在本目录后输入n继续之后步骤。链接 " + file_url)
+				for {
+					input := InputString("是否尝试重新下载？(y/n)")
+					if input == "n" {
+						//TODO 文件名称检查
+						spt := strings.Split(file_url, "/")
+						return true, spt[len(spt)-1]
+					} else if input == "y" {
+						break
+					} else {
+						print("\n")
+					}
+				}
+			} else {
+				return false, fileName
+			}
+		} else if input == "n" {
+			spt := strings.Split(file_url, "/")
+			return true, spt[len(spt)-1]
+		} else {
+			print("\n")
+		}
+	}
+}
+
+func copy(src, dst string) (int64, error) {
+	f, err := os.Create(dst)
+	if err != nil {
+		return 0, err
+	}
+	defer f.Close()
+
+	sourceFileStat, err := os.Stat(src)
+	if err != nil {
+		return 0, err
+	}
+
+	if !sourceFileStat.Mode().IsRegular() {
+		return 0, fmt.Errorf("%s is not a regular file", src)
+	}
+
+	source, err := os.Open(src)
+	if err != nil {
+		return 0, err
+	}
+	defer source.Close()
+
+	destination, err := os.Create(dst)
+	if err != nil {
+		return 0, err
+	}
+	defer destination.Close()
+	nBytes, err := io.Copy(destination, source)
+	return nBytes, err
+}
+
+func DownloadFile(file_url, save_path, proxy string) (string, error) {
 
 	// 下载文件到path/并使用pb进度条
 	// 解析/后的文件名字
@@ -43,7 +121,7 @@ func DownloadFile(file_url, save_path, proxy string) string {
 
 	req, err := http.NewRequest(http.MethodGet, file_url, nil)
 	if err != nil {
-		log.Fatal(err)
+		return "", err
 	}
 
 	tr := &http.Transport{
@@ -61,7 +139,7 @@ func DownloadFile(file_url, save_path, proxy string) string {
 	}).Do(req)
 
 	if err != nil {
-		log.Fatal(err)
+		return "", err
 	}
 
 	// 判断get url的状态码, StatusOK = 200
@@ -71,7 +149,7 @@ func DownloadFile(file_url, save_path, proxy string) string {
 
 		downFile, err := os.Create(save_path + "/" + fileName)
 		if err != nil {
-			log.Fatal(err)
+			return "", err
 		}
 		// 不要忘记关闭打开的文件.
 		defer downFile.Close()
@@ -95,16 +173,39 @@ func DownloadFile(file_url, save_path, proxy string) string {
 
 		fmt.Print("\n")
 		log.Printf("[INFO] [%s]下载成功.", fileName)
-		return save_path + "/" + fileName
+		return save_path + "/" + fileName, nil
 	} else {
 		fmt.Print("\n")
 		log.Printf("[ERROR] [%s]下载失败,%s.", fileName, resp.Status)
-		return ""
+		return "", errors.New("文件状态码不正确")
+	}
+}
+func IsDir(fileAddr string) bool {
+	s, err := os.Stat(fileAddr)
+	if err != nil {
+		log.Println(err)
+		return false
+	}
+	return s.IsDir()
+}
+func CreateDir(dirName string) bool {
+	err := os.Mkdir(dirName, 0755)
+	if err != nil {
+		log.Println(err)
+		return false
+	}
+	return true
+}
+func EnsurePath(path string) {
+	if !IsDir(path) {
+		CreateDir(path)
 	}
 }
 
 //解压
 func DeCompress(zipFile, dest string) (string, error) {
+	//检查目标目录是否存在，不存在则创建
+	EnsurePath(dest)
 	// 打开zip文件
 	reader, err := zip.OpenReader(zipFile)
 	if err != nil {
@@ -168,7 +269,7 @@ func RunCMDPipe(task_label, dir, cmd_str string, args ...string) (string, error)
 	cmd := exec.Command(cmd_str, args...)
 	cmd.Dir = dir
 	//显示运行的命令
-	fmt.Println(cmd.Args)
+	fmt.Println("@"+dir, cmd.Args)
 
 	stdout, err := cmd.StdoutPipe()
 
@@ -209,7 +310,7 @@ func RunCMDTillStringOutput(task_label, dir, ending, cmd_str string, args ...str
 	cmd := exec.Command(cmd_str, args...)
 	cmd.Dir = dir
 	//显示运行的命令
-	fmt.Println(cmd.Args)
+	fmt.Println("@"+dir, cmd.Args)
 
 	stdout, err := cmd.StdoutPipe()
 
@@ -271,4 +372,12 @@ func GitClone(repo, dir string) error {
 		Progress: os.Stdout,
 	})
 	return err
+}
+
+func InputString(prompt string) string {
+	print(prompt)
+	str := ""
+
+	fmt.Scanf("%s", &str)
+	return str
 }
