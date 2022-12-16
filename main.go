@@ -243,9 +243,11 @@ func writeLaunchScript(osname, arch string) {
 	println("生成启动脚本")
 	if osname == "windows" {
 		ioutil.WriteFile("./run-mirai.bat", []byte(`cd mirai/
-java\bin\java -jar mcl.jar`), 0644)
+java\bin\java -jar mcl.jar
+pause`), 0644)
 		ioutil.WriteFile("./run-bot.bat", []byte(`cd QChatGPT
-..\python\python.exe main.py`), 0644)
+..\python\python.exe main.py
+pause`), 0644)
 	} else if osname == "linux" {
 		ioutil.WriteFile("./run-mirai.sh", []byte(`cd mirai/
 java/bin/java -jar mcl.jar`), 0644)
