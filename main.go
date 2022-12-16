@@ -199,7 +199,8 @@ func installMCL(osname, arch, installer_file, proxy string) {
 
 func cloneSource() {
 	println("下载源代码")
-	RunCMDPipe("下载源代码", ".", "git", "clone", "https://gitee.com/RockChin/QChatGPT")
+	GitClone("https://gitee.com/RockChin/QChatGPT", "./QChatGPT")
+	// RunCMDPipe("下载源代码", ".", "git", "clone", "https://gitee.com/RockChin/QChatGPT")
 }
 
 func makeConfig(osname string) {
@@ -207,7 +208,7 @@ func makeConfig(osname string) {
 	if osname == "linux" {
 		RunCMDPipe("生成配置文件", "./QChatGPT", "../python/bin/python3", "main.py")
 	} else {
-		RunCMDPipe("生成配置文件", "./QChatGPT", "../python/python.exe", "main.py", "init_db")
+		RunCMDPipe("生成配置文件", "./QChatGPT", "../python/python.exe", "main.py")
 	}
 	mirai_api_http_config := `adapters:
   - ws
