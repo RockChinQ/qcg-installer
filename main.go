@@ -69,7 +69,11 @@ func main() {
 		defer resp.Body.Close()
 	}()
 	println("安装完成!")
-	println("请先运行run-mirai.bat登录qq号成功之后，保持运行状态，运行run-bot.bat")
+	if osname == "linux" {
+		println("请先运行run-mirai.sh登录qq号成功之后，保持运行状态，运行run-bot.sh")
+	} else if osname == "windows" {
+		println("请先运行run-mirai.bat登录qq号成功之后，保持运行状态，运行run-bot.bat")
+	}
 	fmt.Printf("请按任意键退出...")
 	b := make([]byte, 1)
 	os.Stdin.Read(b)
