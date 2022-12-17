@@ -16,31 +16,14 @@ jobs:
           go-version: 1.18
 
       - name: Build Linux amd64
-        run: go build -o bin/qcg-installer-linux-amd64
-
-      - name: Release Linux amd64
-        uses: ncipollo/release-action@v1
-        with:
-          artifacts: "bin/qcg-installer-linux-amd64"
-          token: ${{ secrets.MY_GITHUB_TOKEN }}
-
-  releaseWindows:
-    name: build and release windows
-    runs-on: [ubuntu-latest]
-
-    steps:
-      - uses: actions/checkout@v3
-
-      - name: Set up Go
-        uses: actions/setup-go@v3
-        with:
-          go-version: 1.18
+        run: go build -v -o bin/qcg-installer-linux-amd64
 
       - name: Build Windows amd64
-        run: go build -o bin/qcg-installer-windows-amd64.exe
+        run: |
+          GOOS=windows GOARCH=amd64 go build -v -o bin/qcg-installer-windows-amd64.exe
 
-      - name: Release Windows amd64
+      - name: Release Binaries
         uses: ncipollo/release-action@v1
         with:
-          artifacts: "bin/qcg-installer-windows-amd64.exe"
+          artifacts: "bin/qcg-installer-linux-amd64", "bin/qcg-installer-windows-amd64.exe"
           token: ${{ secrets.MY_GITHUB_TOKEN }}
