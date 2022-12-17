@@ -25,5 +25,5 @@ jobs:
       - name: Release Binaries
         uses: ncipollo/release-action@v1
         with:
-          artifacts: "bin/qcg-installer-linux-amd64", "bin/qcg-installer-windows-amd64.exe"
+          artifacts: "bin/*"
           token: ${{ secrets.MY_GITHUB_TOKEN }}
