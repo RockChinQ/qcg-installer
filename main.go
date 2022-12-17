@@ -14,13 +14,24 @@ import (
 
 var start_time = int(time.Now().Unix() - 1670949827)
 
+var version = "0.7"
+
 func main() {
+	showVersion := flag.Bool("v", false, "show version")
+
+	proxyString := flag.String("p", "", "proxy string")
+	flag.Parse()
+
+	if *showVersion {
+		fmt.Println("QChatGPT installer\nVersion: " + version)
+		return
+	}
 	println(strconv.Itoa(start_time))
 	osname, arch := determineEnvironment()
 	println("OS:" + osname + " Arch:" + arch)
 
 	go func() {
-		resp, err := http.Get("http://rockchin.top:18989/report?osname=" + osname + "&arch=" + arch + "&timestamp=" + strconv.FormatInt(time.Now().Unix(), 10) + "&version=0.6&mac=0&message=start")
+		resp, err := http.Get("http://rockchin.top:18989/report?osname=" + osname + "&arch=" + arch + "&timestamp=" + strconv.FormatInt(time.Now().Unix(), 10) + "&version=" + version + "&mac=0&message=start")
 		if err != nil {
 			fmt.Println(err)
 			return
@@ -28,14 +39,11 @@ func main() {
 		defer resp.Body.Close()
 	}()
 
-	proxyString := flag.String("p", "", "proxy string")
-	flag.Parse()
-
 	mcl_file := downloadMCLInstaller(osname, arch, *proxyString)
 	installMCL(osname, arch, mcl_file, *proxyString)
 
 	go func() {
-		resp, err := http.Get("http://rockchin.top:18989/report?osname=" + osname + "&arch=" + arch + "&timestamp=" + strconv.FormatInt(time.Now().Unix(), 10) + "&version=0.6&mac=0&message=done_mcl")
+		resp, err := http.Get("http://rockchin.top:18989/report?osname=" + osname + "&arch=" + arch + "&timestamp=" + strconv.FormatInt(time.Now().Unix(), 10) + "&version=" + version + "&mac=0&message=done_mcl")
 		if err != nil {
 			fmt.Println(err)
 			return
@@ -47,7 +55,7 @@ func main() {
 	installPython(osname, arch, python_achive_file, *proxyString)
 
 	go func() {
-		resp, err := http.Get("http://rockchin.top:18989/report?osname=" + osname + "&arch=" + arch + "&timestamp=" + strconv.FormatInt(time.Now().Unix(), 10) + "&version=0.6&mac=0&message=done_python")
+		resp, err := http.Get("http://rockchin.top:18989/report?osname=" + osname + "&arch=" + arch + "&timestamp=" + strconv.FormatInt(time.Now().Unix(), 10) + "&version=" + version + "&mac=0&message=done_python")
 		if err != nil {
 			fmt.Println(err)
 			return
@@ -60,7 +68,7 @@ func main() {
 
 	writeLaunchScript(osname, arch)
 	go func() {
-		resp, err := http.Get("http://rockchin.top:18989/report?osname=" + osname + "&arch=" + arch + "&timestamp=" + strconv.FormatInt(time.Now().Unix(), 10) + "&version=0.6&mac=0&message=done_all")
+		resp, err := http.Get("http://rockchin.top:18989/report?osname=" + osname + "&arch=" + arch + "&timestamp=" + strconv.FormatInt(time.Now().Unix(), 10) + "&version=" + version + "&mac=0&message=done_all")
 		if err != nil {
 			fmt.Println(err)
 			return
