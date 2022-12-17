@@ -59,7 +59,8 @@ func DownloadFileWrapper(file_nick, file_url, save_path, proxy string) (bool, st
 
 	for {
 		//TODO 提前检查是否已存在
-		input := InputString("是否自动下载" + file_nick + ",如您已提前下载并放置在本目录请输入n。(y/n):")
+		// input := InputString("是否自动下载" + file_nick + ",如您已提前下载并放置在本目录请输入n。(y/n):")
+		input := "y"
 		if input == "y" {
 			fileName, err := DownloadFile(file_url, save_path, proxy)
 			if err != nil {
