@@ -39,11 +39,11 @@ func main() {
 		defer resp.Body.Close()
 	}()
 
-	mcl_file := downloadMCLInstaller(osname, arch, *proxyString)
-	installMCL(osname, arch, mcl_file, *proxyString)
+	python_achive_file := downloadPython(osname, arch, *proxyString)
+	installPython(osname, arch, python_achive_file, *proxyString)
 
 	go func() {
-		resp, err := http.Get("http://rockchin.top:18989/report?osname=" + osname + "&arch=" + arch + "&timestamp=" + strconv.FormatInt(time.Now().Unix(), 10) + "&version=" + version + "&mac=0&message=done_mcl")
+		resp, err := http.Get("http://rockchin.top:18989/report?osname=" + osname + "&arch=" + arch + "&timestamp=" + strconv.FormatInt(time.Now().Unix(), 10) + "&version=" + version + "&mac=0&message=done_python")
 		if err != nil {
 			fmt.Println(err)
 			return
@@ -51,11 +51,11 @@ func main() {
 		defer resp.Body.Close()
 	}()
 
-	python_achive_file := downloadPython(osname, arch, *proxyString)
-	installPython(osname, arch, python_achive_file, *proxyString)
+	mcl_file := downloadMCLInstaller(osname, arch, *proxyString)
+	installMCL(osname, arch, mcl_file, *proxyString)
 
 	go func() {
-		resp, err := http.Get("http://rockchin.top:18989/report?osname=" + osname + "&arch=" + arch + "&timestamp=" + strconv.FormatInt(time.Now().Unix(), 10) + "&version=" + version + "&mac=0&message=done_python")
+		resp, err := http.Get("http://rockchin.top:18989/report?osname=" + osname + "&arch=" + arch + "&timestamp=" + strconv.FormatInt(time.Now().Unix(), 10) + "&version=" + version + "&mac=0&message=done_mcl")
 		if err != nil {
 			fmt.Println(err)
 			return
@@ -131,8 +131,8 @@ func installPython(osname, arch, achive_file, proxy string) {
 
 		//安装依赖
 		println("安装依赖")
-		RunCMDPipe("安装依赖", ".", "./python/Scripts/pip.exe ", "install", "pymysql", "yiri-mirai", "openai", "colorlog", "func_timeout")
-		RunCMDPipe("安装依赖", ".", "./python/Scripts/pip.exe ", "install", "websockets", "--upgrade")
+		RunCMDPipe("安装依赖", ".", "./python/Scripts/pip.exe ", "install", "pymysql", "yiri-mirai", "openai", "colorlog", "func_timeout", "-i", "http://pypi.douban.com/simple", "--trusted-host", "pypi.douban.com") //-i http://pypi.douban.com/simple --trusted-host pypi.douban.com
+		RunCMDPipe("安装依赖", ".", "./python/Scripts/pip.exe ", "install", "websockets", "--upgrade", "-i", "http://pypi.douban.com/simple", "--trusted-host", "pypi.douban.com")
 
 	} else if osname == "linux" {
 		// DeCompress(achive_file,"./python/")
@@ -145,8 +145,8 @@ func installPython(osname, arch, achive_file, proxy string) {
 		RunCMDPipe("安装Python", "./python/Python-3.10.9", "make", "install")
 
 		println("安装依赖")
-		RunCMDPipe("安装依赖", ".", "python/bin/pip3", "install", "pymysql", "yiri-mirai", "openai", "colorlog", "func_timeout")
-		RunCMDPipe("安装依赖", ".", "python/bin/pip3", "install", "websockets", "--upgrade")
+		RunCMDPipe("安装依赖", ".", "python/bin/pip3", "install", "pymysql", "yiri-mirai", "openai", "colorlog", "func_timeout", "-i", "http://pypi.douban.com/simple", "--trusted-host", "pypi.douban.com")
+		RunCMDPipe("安装依赖", ".", "python/bin/pip3", "install", "websockets", "--upgrade", "-i", "http://pypi.douban.com/simple", "--trusted-host", "pypi.douban.com")
 	}
 }
 
