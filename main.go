@@ -76,7 +76,7 @@ func main() {
 		}
 		defer resp.Body.Close()
 	}()
-	println("==============配置完成==============")
+	println("===============配置完成===============")
 	if osname == "linux" {
 		println("请先运行run-mirai.sh登录qq号成功之后，保持运行状态，运行run-bot.sh")
 	} else if osname == "windows" {
