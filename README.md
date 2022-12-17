@@ -27,7 +27,8 @@
 - 完毕后根据提示输入`api-key`和`QQ号`  
 
 **常见问题**
-<detail>
+
+<details>
 <summary>📵网络状况不好，下载失败？</summary>
 
 解决方法:
@@ -46,7 +47,7 @@ qcg-installer-0.1-windows-x64.exe -p http://localhost:7890
         - [Python-3.10.9.tgz](https://www.python.org/ftp/python/3.10.9/Python-3.10.9.tgz)
         - [get-pip.py](https://bootstrap.pypa.io/get-pip.py)
         - [mcl-installer-a02f711-linux-amd64-musl](https://github.com/iTXTech/mcl-installer/releases/download/a02f711/mcl-installer-a02f711-linux-amd64-musl)
-</detail>
+</details>
 
 到此安装完成
 
