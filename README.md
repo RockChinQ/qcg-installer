@@ -62,8 +62,9 @@ qcg-installer-0.1-windows-x64.exe -p http://localhost:7890
 
 - 登录完成后运行`run-bot.bat`(Windows) 或 `./run-bot.sh`(Linux) 启动主程序  
 
-**!注意!**
+**常见问题**
 
+- mirai登录提示`QQ版本过低`，见[此issue](https://github.com/RockChinQ/QChatGPT/issues/38)
 - 运行`run-bot.bat`闪退请见[此解决方案](https://github.com/RockChinQ/qcg-installer/issues/2)
 - 若启动后提示安装`uvicorn`或`hypercorn`，请**不要**安装，会导致不明原因bug
 
