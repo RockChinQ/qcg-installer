@@ -16,3 +16,8 @@ jobs:
 
       - name: Build
         run: go build -o bin/qcg-installer-linux-amd64
+
+      - name: Release Binarys
+        uses: ncipollo/release-action@v1
+          artifacts: "bin/qcg-installer-linux-amd64"
+          token: ${{ secrets.MY_GITHUB_TOKEN }}
