@@ -405,5 +405,10 @@ func InputString(prompt string) string {
 	str := ""
 
 	fmt.Scanf("%s", &str)
+
+	if len(str) < 1 || str == "\n" || str == "" || str == " " || str == "\r" || str == "\t" || str == "\b" {
+		fmt.Scanf("%s", &str)
+	}
+
 	return str
 }
