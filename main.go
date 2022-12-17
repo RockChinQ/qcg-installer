@@ -6,6 +6,7 @@ import (
 	"io/ioutil"
 	"net/http"
 	"os"
+	"regexp"
 	"runtime"
 	"strconv"
 	"strings"
@@ -244,9 +245,17 @@ adapterSettings:
 	println("===================配置完成==================")
 
 	api_key := ""
-	print("请输入OpenAI账号的api_key: ")
-	fmt.Scanf("%s", &api_key)
-	ReplaceStringInFile("./QChatGPT/config.py", "openai_api_key", api_key)
+	re := regexp.MustCompile("^sk-[a-zA-Z0-9]{48}$")
+	for {
+		input := InputString("请输入OpenAI账号的api_key: ")
+
+		if re.MatchString(api_key) {
+			ReplaceStringInFile("./QChatGPT/config.py", "openai_api_key", api_key)
+			break
+		} else if input != "" && input != "\n" {
+			println("api_key格式错误")
+		}
+	}
 
 	qqn := 0
 	print("请输入QQ号: ")
