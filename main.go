@@ -244,13 +244,12 @@ adapterSettings:
 
 	println("===================配置完成==================")
 
-	api_key := ""
 	re := regexp.MustCompile("^sk-[a-zA-Z0-9]{48}$")
 	for {
 		input := InputString("请输入OpenAI账号的api_key: ")
 
-		if re.MatchString(api_key) {
-			ReplaceStringInFile("./QChatGPT/config.py", "openai_api_key", api_key)
+		if re.MatchString(input) {
+			ReplaceStringInFile("./QChatGPT/config.py", "openai_api_key", input)
 			break
 		} else if input != "" && input != "\n" {
 			println("api_key格式错误")
