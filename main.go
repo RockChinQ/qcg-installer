@@ -60,13 +60,11 @@ func main() {
 
 	writeLaunchScript(osname, arch)
 	go func() {
-		println("上报安装信息")
 		resp, err := http.Get("http://rockchin.top:18989/report?osname=" + osname + "&arch=" + arch + "&timestamp=" + strconv.FormatInt(time.Now().Unix(), 10) + "&version=0.6&mac=0&message=done_all")
 		if err != nil {
 			fmt.Println(err)
 			return
 		}
-		println("上报安装信息成功")
 		defer resp.Body.Close()
 	}()
 	println("安装完成!")
@@ -78,6 +76,9 @@ func main() {
 	fmt.Printf("请按任意键退出...")
 	b := make([]byte, 1)
 	os.Stdin.Read(b)
+	if osname == "windows" {
+		os.Stdin.Read(b)
+	}
 }
 
 // 确定OS和架构
@@ -214,9 +215,9 @@ func cloneSource() {
 func makeConfig(osname string) {
 	println("生成配置文件")
 	if osname == "linux" {
-		RunCMDPipe("生成配置文件", "./QChatGPT", "../python/bin/python3", "main.py")
+		RunCMDTillStringOutput("生成配置文件", "./QChatGPT", "程序启动完成", "./python/bin/python3", "main.py")
 	} else {
-		RunCMDPipe("生成配置文件", "./QChatGPT", "../python/python.exe", "main.py")
+		RunCMDTillStringOutput("生成配置文件", "./QChatGPT", "程序启动完成", "../python/python.exe", "main.py")
 	}
 	mirai_api_http_config := `adapters:
   - ws

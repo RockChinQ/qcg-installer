@@ -27,6 +27,22 @@ func DownloadFileOrPrepared(file_nick, file_url, save_path, proxy string) string
 	if _, err := os.Stat(save_path); os.IsNotExist(err) {
 		os.Mkdir(save_path, os.ModePerm)
 	}
+
+	//检查目标文件是否已存在
+	spt := strings.Split(file_url, "/")
+	local_file_name := spt[len(spt)-1]
+
+	if exist, _ := exists(save_path + "/" + local_file_name); exist {
+		return save_path + "/" + local_file_name
+	}
+	if exist, _ := exists(local_file_name); exist {
+		_, err := copy(local_file_name, save_path+"/"+local_file_name)
+		if err != nil {
+			panic(err)
+		}
+		return save_path + "/" + local_file_name
+	}
+
 	isLocal, fileName := DownloadFileWrapper(file_nick, file_url, save_path, proxy)
 	if isLocal {
 		_, err := copy(fileName, save_path+"/"+fileName)
@@ -71,7 +87,16 @@ func DownloadFileWrapper(file_nick, file_url, save_path, proxy string) (bool, st
 		}
 	}
 }
-
+func exists(path string) (bool, error) {
+	_, err := os.Stat(path)
+	if err == nil {
+		return true, nil
+	}
+	if os.IsNotExist(err) {
+		return false, nil
+	}
+	return true, err
+}
 func copy(src, dst string) (int64, error) {
 	f, err := os.Create(dst)
 	if err != nil {
