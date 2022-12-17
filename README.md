@@ -26,11 +26,27 @@
 - 保存到电脑上某个空目录，直接运行，等待配置环境
 - 完毕后根据提示输入`api-key`和`QQ号`  
 
-**!注意!**
-- 若下载速度较慢欲使用网络代理，可在启动安装器时提供参数`-p <代理地址>`,如：
+**常见问题**
+<detail>
+<summary>📵网络状况不好，下载失败？</summary>
+
+解决方法:
+
+- 若您有网络代理可用于提速，可在启动安装器时提供参数`-p <代理地址>`,如：
 ```
 qcg-installer-0.1-windows-x64.exe -p http://localhost:7890
 ```
+
+- 也可以提前下载所需文件，安装器运行中将不再进行下载，此功能适用于安装器版本`0.7`以上
+    - Windows系统，下载以下文件并放置在安装器同目录，**请勿**重命名
+        - [python-3.10.9-embed-amd64.zip](https://www.python.org/ftp/python/3.10.9/python-3.10.9-embed-amd64.zip)
+        - [get-pip.py](https://bootstrap.pypa.io/get-pip.py)
+        - [mcl-installer-a02f711-windows-amd64.exe](https://github.com/iTXTech/mcl-installer/releases/download/a02f711/mcl-installer-a02f711-windows-amd64.exe)
+    - Linux系统，下载以下文件并放置在安装器同目录，**请勿**重命名
+        - [Python-3.10.9.tgz](https://www.python.org/ftp/python/3.10.9/Python-3.10.9.tgz)
+        - [get-pip.py](https://bootstrap.pypa.io/get-pip.py)
+        - [mcl-installer-a02f711-linux-amd64-musl](https://github.com/iTXTech/mcl-installer/releases/download/a02f711/mcl-installer-a02f711-linux-amd64-musl)
+</detail>
 
 到此安装完成
 
