@@ -25,6 +25,7 @@
 - 从[Release页面](https://github.com/RockChinQ/qcg-installer/releases/latest)下载可执行文件，若无法访问请到[Gitee](https://gitee.com/RockChin/qcg-installer/releases/latest)   
 - 保存到电脑上某个空目录，直接运行，等待配置环境
 - 完毕后根据提示输入`api-key`和`QQ号`  
+- 到此安装完成
 
 **常见问题**
 
@@ -48,9 +49,7 @@ qcg-installer-0.1-windows-x64.exe -p http://localhost:7890
         - [get-pip.py](https://bootstrap.pypa.io/get-pip.py)
         - [mcl-installer-a02f711-linux-amd64-musl](https://github.com/iTXTech/mcl-installer/releases/download/a02f711/mcl-installer-a02f711-linux-amd64-musl)
 </details>
-
-到此安装完成
-
+    
 ### 3. 运行程序
 
 之后每次重启之后均需要按照以下步骤启动程序
