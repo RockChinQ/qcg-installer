@@ -15,7 +15,7 @@ import (
 
 var start_time = int(time.Now().Unix() - 1670949827)
 
-var version = "0.7"
+var version = "0.11"
 
 func main() {
 	showVersion := flag.Bool("v", false, "show version")
