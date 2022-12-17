@@ -3,14 +3,9 @@ name: Build Linux amd64
 on: [push]
 
 jobs:
-  release:
-    name: build and release
-    runs-on: ${{ matrix.os }}   //流水线会跑在哪些操作系统中
-
-    strategy:
-      fail-fast: false
-      matrix:
-        os: [windows-latest, ubuntu-latest]  // 流水线将分别触发在 windows、macos、ubuntu 三个系统中
+  releaseLinux:
+    name: build and release linux
+    runs-on: [ubuntu-latest]
 
     steps:
       - uses: actions/checkout@v3
@@ -21,22 +16,30 @@ jobs:
           go-version: 1.18
 
       - name: Build Linux amd64
-        if: matrix.os == 'ubuntu-latest'
         run: go build -o bin/qcg-installer-linux-amd64
 
       - name: Release Linux amd64
-        if: matrix.os == 'ubuntu-latest'
         uses: ncipollo/release-action@v1
         with:
           artifacts: "bin/qcg-installer-linux-amd64"
           token: ${{ secrets.MY_GITHUB_TOKEN }}
 
+  releaseWindows:
+    name: build and release windows
+    runs-on: [ubuntu-latest]
+
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Set up Go
+        uses: actions/setup-go@v3
+        with:
+          go-version: 1.18
+
       - name: Build Windows amd64
-        if: matrix.os == 'windows-latest'
         run: go build -o bin/qcg-installer-windows-amd64.exe
 
       - name: Release Windows amd64
-        if: matrix.os == 'windows-latest'
         uses: ncipollo/release-action@v1
         with:
           artifacts: "bin/qcg-installer-windows-amd64.exe"
