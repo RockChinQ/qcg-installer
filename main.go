@@ -132,8 +132,9 @@ func installPython(osname, arch, achive_file, proxy string) {
 
 		//安装依赖
 		println("安装依赖")
-		RunCMDPipe("安装依赖", ".", "./python/Scripts/pip.exe ", "install", "pymysql", "yiri-mirai", "openai", "colorlog", "func_timeout", "-i", "http://pypi.douban.com/simple", "--trusted-host", "pypi.douban.com") //-i http://pypi.douban.com/simple --trusted-host pypi.douban.com
+		RunCMDPipe("安装依赖", ".", "./python/Scripts/pip.exe ", "install", "yiri-mirai", "openai", "colorlog", "func_timeout", "-i", "http://pypi.douban.com/simple", "--trusted-host", "pypi.douban.com") //-i http://pypi.douban.com/simple --trusted-host pypi.douban.com
 		RunCMDPipe("安装依赖", ".", "./python/Scripts/pip.exe ", "install", "websockets", "--upgrade", "-i", "http://pypi.douban.com/simple", "--trusted-host", "pypi.douban.com")
+		RunCMDPipe("安装依赖", ".", "./python/Scripts/pip.exe ", "install", "dulwich", "-i", "http://pypi.douban.com/simple", "--trusted-host", "pypi.douban.com")
 
 	} else if osname == "linux" {
 		// DeCompress(achive_file,"./python/")
@@ -146,8 +147,9 @@ func installPython(osname, arch, achive_file, proxy string) {
 		RunCMDPipe("安装Python", "./python/Python-3.10.9", "make", "install")
 
 		println("安装依赖")
-		RunCMDPipe("安装依赖", ".", "python/bin/pip3", "install", "pymysql", "yiri-mirai", "openai", "colorlog", "func_timeout", "-i", "http://pypi.douban.com/simple", "--trusted-host", "pypi.douban.com")
+		RunCMDPipe("安装依赖", ".", "python/bin/pip3", "install", "yiri-mirai", "openai", "colorlog", "func_timeout", "-i", "http://pypi.douban.com/simple", "--trusted-host", "pypi.douban.com")
 		RunCMDPipe("安装依赖", ".", "python/bin/pip3", "install", "websockets", "--upgrade", "-i", "http://pypi.douban.com/simple", "--trusted-host", "pypi.douban.com")
+		RunCMDPipe("安装依赖", ".", "python/bin/pip3", "install", "dulwich", "-i", "http://pypi.douban.com/simple", "--trusted-host", "pypi.douban.com")
 	}
 }
 
@@ -224,7 +226,7 @@ func cloneSource() {
 func makeConfig(osname string) {
 	println("生成配置文件")
 	if osname == "linux" {
-		RunCMDTillStringOutput("生成配置文件", "./QChatGPT", "程序启动完成", "./python/bin/python3", "main.py")
+		RunCMDTillStringOutput("生成配置文件", "./QChatGPT", "程序启动完成", "../python/bin/python3", "main.py")
 	} else {
 		RunCMDTillStringOutput("生成配置文件", "./QChatGPT", "程序启动完成", "../python/python.exe", "main.py")
 	}
