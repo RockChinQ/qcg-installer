@@ -252,6 +252,7 @@ adapterSettings:
 
 		if re.MatchString(input) {
 			ReplaceStringInFile("./QChatGPT/config.py", "openai_api_key", input)
+			ReplaceStringInFile("./QChatGPT/config.py", "fill_your_api_key_here", input)
 			break
 		} else if input != "" && input != "\n" {
 			println("api_key格式错误")
