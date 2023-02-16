@@ -1,4 +1,4 @@
-name: Build Linux amd64
+name: Build Binaries
 
 on: [push]
 
