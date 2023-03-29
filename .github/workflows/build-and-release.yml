@@ -1,29 +1,65 @@
-name: Build Binaries
+name: Go Build and Release
 
-on: [push]
+on:
+  push:
+    paths:
+      - '**.go'
+  pull_request:
+    types:
+      - closed
+    paths:
+      - '**.go'
+    branches:
+      - master
 
 jobs:
-  release:
-    name: Build and Release
-    runs-on: [ubuntu-latest]
-
+  build-and-release:
+    if: github.event.pull_request.merged == true || github.event_name == 'push'
+    runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v3
+    - name: Checkout code
+      uses: actions/checkout@v2
 
-      - name: Set up Go
-        uses: actions/setup-go@v3
-        with:
-          go-version: 1.18
+    - name: Set up Go
+      uses: actions/setup-go@v2
+      with:
+        go-version: 1.18
 
-      - name: Build Linux amd64
-        run: go build -v -o bin/qcg-installer-linux-amd64
+    - name: Build Windows x64
+      run: |
+        GOOS=windows GOARCH=amd64 go build -o qcg-installer-windows-amd64.exe
 
-      - name: Build Windows amd64
-        run: |
-          GOOS=windows GOARCH=amd64 go build -v -o bin/qcg-installer-windows-amd64.exe
+    - name: Build Linux x64
+      run: |
+        GOOS=linux GOARCH=amd64 go build -o qcg-installer-linux-amd64
 
-      - name: Release Binaries
-        uses: ncipollo/release-action@v1
-        with:
-          artifacts: "bin/*"
-          token: ${{ secrets.MY_GITHUB_TOKEN }}
+    - name: Create Release
+      id: create_release
+      uses: actions/create-release@v1
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      with:
+        tag_name: auto-release-${{ github.sha }}
+        release_name: qcg-install Auto Release ${{ github.sha }}
+        draft: false
+        prerelease: false
+
+    - name: Upload Windows x64 Asset
+      uses: actions/upload-release-asset@v1
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      with:
+        upload_url: ${{ steps.create_release.outputs.upload_url }}
+        asset_path: ./qcg-installer-windows-amd64.exe
+        asset_name: qcg-installer-windows-amd64.exe
+        asset_content_type: application/octet-stream
+
+    - name: Upload Linux x64 Asset
+      uses: actions/upload-release-asset@v1
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      with:
+        upload_url: ${{ steps.create_release.outputs.upload_url }}
+        asset_path: ./qcg-installer-linux-amd64
+        asset_name: qcg-installer-linux-amd64
+        asset_content_type: application/octet-stream
