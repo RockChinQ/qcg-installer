@@ -6,3 +6,4 @@ run-bot*
 run-mirai*
 *.exe
 bin/
+go.sum
