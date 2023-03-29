@@ -49,7 +49,7 @@ jobs:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       with:
         tag_name: auto-release-${{ steps.get_commit_id.outputs.commit_id }}
-        release_name: qcg-install Auto Release ${{ steps.get_commit_id.outputs.commit_id }}
+        release_name: QChatGPT Installer Auto Release ${{ steps.get_commit_id.outputs.commit_id }}
         draft: false
         prerelease: true
 
