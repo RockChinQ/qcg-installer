@@ -20,6 +20,10 @@ jobs:
     - name: Checkout code
       uses: actions/checkout@v2
 
+    - name: Get commit id
+        id: get_commit_id
+        run: echo "::set-output name=commit_id::$(git rev-parse --short HEAD)"
+
     - name: Set up Go
       uses: actions/setup-go@v2
       with:
@@ -44,10 +48,10 @@ jobs:
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       with:
-        tag_name: auto-release-${{ github.sha }}
-        release_name: qcg-install Auto Release ${{ github.sha }}
+        tag_name: auto-release-${{ steps.get_commit_id.outputs.commit_id }}
+        release_name: qcg-install Auto Release ${{ steps.get_commit_id.outputs.commit_id }}
         draft: false
-        prerelease: false
+        prerelease: true
 
     - name: Upload Windows x64 Asset
       uses: actions/upload-release-asset@v1
