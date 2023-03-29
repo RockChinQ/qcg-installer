@@ -25,6 +25,11 @@ jobs:
       with:
         go-version: 1.18
 
+    - name: Enable Go Module111 and Go mod Tidy
+      run: |
+        go mod download
+        go mod tidy
+
     - name: Build Windows x64
       run: |
         GOOS=windows GOARCH=amd64 go build -o qcg-installer-windows-amd64.exe
