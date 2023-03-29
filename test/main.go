@@ -20,6 +20,7 @@ func InputString(prompt string) string {
 }
 
 func main() {
+	fmt.Println("test")
 
 	re, err := regexp.Compile("sk[-][a-zA-Z0-9]{48}")
 	if err != nil {
