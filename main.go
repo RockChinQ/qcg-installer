@@ -15,7 +15,7 @@ import (
 
 var start_time = int(time.Now().Unix() - 1670949827)
 
-var version = "0.13"
+var version = "0.13.2"
 
 func main() {
 
