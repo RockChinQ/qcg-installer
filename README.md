@@ -6,7 +6,7 @@
 
 ## 使用方法
 
-- **部署过程中遇到任何问题，请先在[QChatGPT](https://github.com/RockChinQ/QChatGPT/issues)或[qcg-installer](https://github.com/RockChinQ/qcg-installer/issues)的issue里进行搜索，若找不到请前往：交流、答疑群: `656285629`**
+- **部署过程中遇到任何问题，请先在[QChatGPT](https://github.com/RockChinQ/QChatGPT/issues)或[qcg-installer](https://github.com/RockChinQ/qcg-installer/issues)的issue里进行搜索，若找不到请前往：交流、答疑群: `195992197`**
     - **进群提问前请您`确保`已经找遍文档和issue均无法解决**
     - **进群提问前请您`确保`已经找遍文档和issue均无法解决**
     - **进群提问前请您`确保`已经找遍文档和issue均无法解决**
