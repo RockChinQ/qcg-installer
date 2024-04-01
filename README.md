@@ -1,3 +1,8 @@
+
+**此项目停止维护，不建议再使用。请查看[官方文档](https://qchatgpt.rockchin.top/)中其他推荐的部署方案**  
+**此项目停止维护，不建议再使用。请查看[官方文档](https://qchatgpt.rockchin.top/)中其他推荐的部署方案**  
+**此项目停止维护，不建议再使用。请查看[官方文档](https://qchatgpt.rockchin.top/)中其他推荐的部署方案**
+
 # Installer for QChatGPT
 
 为[QChatGPT项目](https://github.com/RockChinQ/QChatGPT)使用Go语言编写的一键部署脚本，自动化部署所需依赖  
